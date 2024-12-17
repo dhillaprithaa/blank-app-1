@@ -1,0 +1,31 @@
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import pickle
+import os
+
+# Load dataset
+df = pd.read_csv("data/Country-data.csv")
+
+# Preprocessing
+df_clean = df.drop(columns=["country"], errors="ignore")
+scaler = StandardScaler()
+df_scaled = scaler.fit_transform(df_clean)
+
+# Train KMeans
+kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans.fit(df_scaled)
+
+# Train PCA
+pca = PCA(n_components=2)
+pca.fit(df_scaled)
+
+# Save models
+os.makedirs("models", exist_ok=True)
+with open("models/kmeans_model.pkl", "wb") as f:
+    pickle.dump(kmeans, f)
+with open("models/pca_model.pkl", "wb") as f:
+    pickle.dump(pca, f)
+
+print("Model KMeans dan PCA berhasil disimpan.")
